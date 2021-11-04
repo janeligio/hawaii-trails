@@ -1,8 +1,9 @@
 import {
   BrowserRouter as Router,
-  Switch,
+  Routes,
   Route,
-} from "react-router-dom";
+  Switch
+} from 'react-router-dom';
 
 import Navigation from "./components/Navigation/Navigation";
 import Home from "./pages/home/Home";
@@ -17,7 +18,7 @@ function App() {
           <Route path="/login">
             <Login />
           </Route>
-          <Route path="/">
+          <Route exact path="/">
             <Home />
           </Route>
         </Switch>
