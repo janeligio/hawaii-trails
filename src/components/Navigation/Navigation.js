@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import './Navigation.sass';
+
 export default function Navigation() {
     return (
-        <nav>
+        <nav className="navigation">
             <ul>
                 <li>
                     <Link to="/">Home</Link>
