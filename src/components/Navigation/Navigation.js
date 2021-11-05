@@ -8,7 +8,7 @@ export default function Navigation() {
         <nav className="navigation">
             <ul>
                 <li>
-                    <Link to="/">Home</Link>
+                    <Link to="/">Hawai'i Trails</Link>
                 </li>
                 <li>
                     <Link to="/login">Log In</Link>
