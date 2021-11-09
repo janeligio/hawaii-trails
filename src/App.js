@@ -8,7 +8,7 @@ import MapExample from './components/MapExample/MapExample';
 import Login from './pages/login/Login';
 import SignUp from './pages/signup/SignUp';
 import Profile from './pages/profile/Profile';
-
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 function App() {
     return (
         <Router>
@@ -22,9 +22,7 @@ function App() {
                         <Route path="/signup">
                             <SignUp />
                         </Route>
-                        <Route path="/profile">
-                            <Profile />
-                        </Route>
+                        <ProtectedRoute path="/profile" component={Profile} />
                         <Route exact path="/">
                             <Home />
                         </Route>

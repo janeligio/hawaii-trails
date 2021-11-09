@@ -5,7 +5,8 @@ import AuthenticationButton from '../AuthenticationButton/AuthenticationButton';
 import './Navigation.sass';
 
 export default function Navigation() {
-    const { isLoading } = useAuth0();
+    const { isLoading, isAuthenticated } = useAuth0();
+
     return (
         <nav className="navigation">
             <ul style={{ display: 'flex' }}>
@@ -16,9 +17,13 @@ export default function Navigation() {
                 <li>
                     <Link to="/donate">Donate</Link>
                 </li>
-                <li>
-                    <Link to="/profile">Profile</Link>
-                </li>
+
+                {isAuthenticated && (
+                    <li>
+                        <Link to="/profile">Profile</Link>
+                    </li>
+                )}
+
                 <li>
                     {isLoading ? (
                         <button>Loading...</button>
