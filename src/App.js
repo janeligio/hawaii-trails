@@ -22,8 +22,7 @@ function App() {
                             <SignUp />
                         </Route>
                         <Route exact path="/">
-                            {/* <Home /> */}
-                            <h1>home</h1>
+                            <Home />
                         </Route>
                     </Switch>
                 </div>

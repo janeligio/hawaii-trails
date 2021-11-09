@@ -22,12 +22,12 @@ export default function Home({ zoom = 5, center = [10.306944, -157.858333] }) {
             return;
         } else {
             console.log(view.allLayerViews);
-            if (view.zoom !== Math.round(zoom, 0)) {
-                // zoom prop has changed, update view
-                view.zoom = zoom;
-                console.log(view.zoom);
-                console.log(view.center);
-            }
+            // if (view.zoom !== Math.round(zoom, 0)) {
+            //     // zoom prop has changed, update view
+            //     view.zoom = zoom;
+            //     console.log(view.zoom);
+            //     console.log(view.center);
+            // }
         }
     }, [zoom, view]);
 
