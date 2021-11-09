@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+import AuthenticationButton from '../AuthenticationButton/AuthenticationButton';
 import './Navigation.sass';
 
 export default function Navigation() {
@@ -15,7 +15,7 @@ export default function Navigation() {
                     <Link to="/donate">Donate</Link>
                 </li>
                 <li>
-                    <Link to="/login">Log In</Link>
+                    <AuthenticationButton />
                 </li>
             </ul>
         </nav>

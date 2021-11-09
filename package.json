@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@arcgis/core": "^4.21.2",
+    "@auth0/auth0-react": "^1.8.0",
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@esri/react-arcgis": "^5.1.0",
