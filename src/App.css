@@ -1,2 +1,2 @@
-.App {
-}
+/* Import ArcGIS styles */
+@import 'https://js.arcgis.com/4.21.2/@arcgis/core/assets/esri/themes/light/main.css';

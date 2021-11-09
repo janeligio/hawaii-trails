@@ -1,78 +1,51 @@
-// import { useMap, useWebMap, useEvent } from 'esri-loader-hooks';
-// import { WebMap } from '@esri/react-arcgis';
-import MapView from '@arcgis/core/views/MapView';
-import WebMap from '@arcgis/core/WebMap';
-import Map from '@arcgis/core/Map';
-import Graphic from '@arcgis/core/Graphic';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { loadModules } from 'esri-loader';
 
-import './Home.sass';
-
-export default function Home() {
-    const [map, setMap] = useState(null);
-    const [view, setView] = useState(null);
+const HikePolygon = (props) => {
     const [graphic, setGraphic] = useState(null);
-    const mapDiv = useRef(null);
-
-    const honolulu = [-157.858333, 21.306944]; // lng/lat for some reason
-
     useEffect(() => {
-        if (mapDiv.current) {
-            // Initialize map
-            const map = new Map({
-                basemap: 'arcgis-nova', // Basemap layer service
-            });
+        loadModules(['esri/Graphic'])
+            .then(([Graphic]) => {
+                // Create a polygon geometry
+                const polyline = {
+                    type: 'polyline', // autocasts as new Polyline()
+                    paths: examplePolyLine,
+                };
 
-            const view = new MapView({
-                container: mapDiv.current,
-                map: map,
-                center: honolulu,
-                zoom: 7,
-            });
+                const lineSymbol = {
+                    type: 'simple-line', // autocasts as new SimpleLineSymbol()
+                    color: [226, 119, 40], // RGB color values as an array
+                    width: 4,
+                };
 
-            const polyline = {
-                type: 'polyline', // autocasts as new Polyline()
-                paths: examplePolyLine,
-            };
+                const lineAtt = {
+                    Trailname: 'Kamananui Valley Road',
+                    Features:
+                        'Hike, Nature Study, Hunt, Stream, Archeo, Culture',
+                    Island: 'Oahu',
+                    Length_Miles: 4,
+                    Standard: 'Easy',
+                };
 
-            // Proof of concept - adding a graphic to the map
+                // Add the geometry and symbol to a new graphic
+                const polylineGraphic = new Graphic({
+                    geometry: polyline, // Add the geometry created in step 4
+                    symbol: lineSymbol, // Add the symbol created in step 5
+                    attributes: lineAtt, // Add the attributes created in step 6
+                });
 
-            const lineSymbol = {
-                type: 'simple-line', // autocasts as new SimpleLineSymbol()
-                color: [226, 119, 40], // RGB color values as an array
-                width: 4,
-            };
+                setGraphic(graphic);
+                props.view.graphics.add(polylineGraphic);
+            })
+            .catch((err) => console.error(err));
 
-            const lineAtt = {
-                Trailname: 'Kamananui Valley Road',
-                Features: 'Hike, Nature Study, Hunt, Stream, Archeo, Culture',
-                Island: 'Oahu',
-                Length_Miles: 4,
-                Standard: 'Easy',
-            };
-
-            // Add the geometry and symbol to a new graphic
-            const polylineGraphic = new Graphic({
-                geometry: polyline, // Add the geometry created in step 4
-                symbol: lineSymbol, // Add the symbol created in step 5
-                attributes: lineAtt, // Add the attributes created in step 6
-            });
-
-            view.graphics.add(polylineGraphic);
-
-            setMap(map);
-            setView(view);
-            setGraphic(polylineGraphic);
-        }
+        return function cleanup() {
+            props.view.graphics.remove(graphic);
+        };
     }, []);
 
-    // TODO: useGraphics(view); // Add graphics to the view
-    return (
-        <main id="home">
-            <div style={{ height: '100vh' }} ref={mapDiv} />
-        </main>
-    );
-}
+    return null;
+};
 
 const examplePolyLine = [
     [-157.88026164532826, 21.374216183377357],
@@ -276,3 +249,5 @@ const examplePolyLine = [
     [-157.83827317195232, 21.38790522711282],
     [-157.83811395994903, 21.38815707150868],
 ];
+
+export default HikePolygon;
