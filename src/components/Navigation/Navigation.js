@@ -1,9 +1,11 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import AuthenticationButton from '../AuthenticationButton/AuthenticationButton';
 import './Navigation.sass';
 
 export default function Navigation() {
+    const { isLoading } = useAuth0();
     return (
         <nav className="navigation">
             <ul style={{ display: 'flex' }}>
@@ -15,7 +17,14 @@ export default function Navigation() {
                     <Link to="/donate">Donate</Link>
                 </li>
                 <li>
-                    <AuthenticationButton />
+                    <Link to="/profile">Profile</Link>
+                </li>
+                <li>
+                    {isLoading ? (
+                        <button>Loading...</button>
+                    ) : (
+                        <AuthenticationButton />
+                    )}
                 </li>
             </ul>
         </nav>

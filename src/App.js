@@ -7,6 +7,7 @@ import Home from './pages/home/Home';
 import MapExample from './components/MapExample/MapExample';
 import Login from './pages/login/Login';
 import SignUp from './pages/signup/SignUp';
+import Profile from './pages/profile/Profile';
 
 function App() {
     return (
@@ -20,6 +21,9 @@ function App() {
                         </Route>
                         <Route path="/signup">
                             <SignUp />
+                        </Route>
+                        <Route path="/profile">
+                            <Profile />
                         </Route>
                         <Route exact path="/">
                             <Home />
