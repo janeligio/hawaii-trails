@@ -11,6 +11,7 @@ import Profile from './pages/profile/Profile';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
 import './App.css';
+import ExternalApi from './views/external-api';
 
 esriConfig.apiKey = process.env.REACT_APP_ARCGIS_API_KEY;
 
@@ -28,6 +29,7 @@ function App() {
                             <SignUp />
                         </Route>
                         <ProtectedRoute path="/profile" component={Profile} />
+                        <ProtectedRoute path="/external-api" component={ExternalApi} />
                         <Route exact path="/">
                             <Home />
                         </Route>
