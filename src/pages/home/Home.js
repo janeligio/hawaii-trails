@@ -4,6 +4,11 @@ import MapView from '@arcgis/core/views/MapView';
 import WebMap from '@arcgis/core/WebMap';
 import Map from '@arcgis/core/Map';
 import Graphic from '@arcgis/core/Graphic';
+import PopupTemplate from '@arcgis/core/PopupTemplate';
+import CustomContent from '@arcgis/core/popup/content/CustomContent';
+import Content from '@arcgis/core/popup/content/Content';
+import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer';
+
 import { useState, useEffect, useRef } from 'react';
 
 import './Home.sass';
@@ -17,10 +22,33 @@ export default function Home() {
     const honolulu = [-157.858333, 21.306944]; // lng/lat for some reason
 
     useEffect(() => {
+        async function fetchData() {
+            const response = await fetch('http://localhost:3001/green', {
+                mode: 'cors', // no-cors, *cors, same-origin
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            });
+            const data = await response.json();
+            return data;
+        }
+        console.log(fetchData().then((data) => console.log(data)));
+
         if (mapDiv.current) {
             // Initialize map
             const map = new Map({
                 basemap: 'arcgis-nova', // Basemap layer service
+            });
+
+            // Add geoJSONLayer
+            const geoJSONLayer = new GeoJSONLayer({
+                url: 'http://localhost:3001/green',
+                copyright: "HACC 2021 Hawai'i Trails",
+            });
+
+            geoJSONLayer.popupTemplate = new PopupTemplate({
+                Trailname: '{Trailname}',
             });
 
             const view = new MapView({
@@ -29,6 +57,8 @@ export default function Home() {
                 center: honolulu,
                 zoom: 7,
             });
+
+            map.add(geoJSONLayer);
 
             const polyline = {
                 type: 'polyline', // autocasts as new Polyline()
@@ -39,23 +69,69 @@ export default function Home() {
 
             const lineSymbol = {
                 type: 'simple-line', // autocasts as new SimpleLineSymbol()
-                color: [226, 119, 40], // RGB color values as an array
+                color: 'green', // RGB color values as an array
                 width: 4,
             };
 
             const lineAtt = {
-                Trailname: 'Kamananui Valley Road',
-                Features: 'Hike, Nature Study, Hunt, Stream, Archeo, Culture',
-                Island: 'Oahu',
-                Length_Miles: 4,
-                Standard: 'Easy',
+                // Trailname: 'Kamananui Valley Road',
+                // Features: 'Hike, Nature Study, Hunt, Stream, Archeo, Culture',
+                // Island: 'Oahu',
+                // Length_Miles: 2,
+                // Standard: 'Easy',
+                TRAILNAME: 'Kamananui Valley Road',
+                FEATURES: 'Hike, Nature Study, Hunt, Stream, Archeo, Culture',
+                ISLAND: 'Oahu',
+                LENGTH_MILES: 2,
+                STANDARD: 'Easy',
             };
+
+            const popupTemplate = new PopupTemplate();
+            // TODO: Implement a button in popup that lets users check in
+            let customContentWidget = new CustomContent({
+                outFields: ['*'],
+                creator: function (graphic) {},
+                // creator function returns either string, HTMLElement, Widget, or Promise
+            });
+            popupTemplate.title = '<h1>{TRAILNAME}</h1>';
+            popupTemplate.content =
+                '<p>{FEATURES}</p>' +
+                '<p>{ISLAND}</p>' +
+                '<p>{LENGTH_MILES}</p>' +
+                '<p>{STANDARD}</p>';
 
             // Add the geometry and symbol to a new graphic
             const polylineGraphic = new Graphic({
                 geometry: polyline, // Add the geometry created in step 4
                 symbol: lineSymbol, // Add the symbol created in step 5
                 attributes: lineAtt, // Add the attributes created in step 6
+                popupTemplate: popupTemplate,
+                // popupTemplate: {
+                //     // autocasts as new PopupTemplate()
+                //     title: '{TRAILNAME}',
+                //     content: [
+                //         {
+                //             type: 'fields',
+                //             fieldInfos: [
+                //                 {
+                //                     fieldName: 'TRAILNAME',
+                //                 },
+                //                 {
+                //                     fieldName: 'FEATURES',
+                //                 },
+                //                 {
+                //                     fieldName: 'ISLAND',
+                //                 },
+                //                 {
+                //                     fieldName: 'LENGTH_MILES',
+                //                 },
+                //                 {
+                //                     fieldName: 'STANDARD',
+                //                 },
+                //             ],
+                //         },
+                //     ],
+                // },
             });
 
             view.graphics.add(polylineGraphic);
