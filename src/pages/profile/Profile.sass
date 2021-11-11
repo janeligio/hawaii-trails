@@ -1,0 +1,49 @@
+@import '../../styles/_variables.sass'
+
+#profile
+    height: $main-height
+    display: flex
+    justify-content: center
+
+    h1, h2, p
+        margin: 0
+
+    .user
+        box-sizing: border-box
+        padding: 1rem
+        width: 300px
+        background: white
+        background: url('https://images.unsplash.com/photo-1542332213-31f87348057f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2070&q=80')
+        background-repeat: no-repeat, repeat
+        background-size: cover
+
+        .image
+            border-radius: 50%
+            display: block
+            width: 100px
+            margin: 0 auto
+
+        .info
+
+            margin: 0 auto
+            p
+                color: white
+                text-align: center
+    .check-in
+        flex: 1
+        padding: 2rem
+        h1
+            font-size: 1.5rem
+            font-weight: normal
+
+        .check-in-container
+            display: flex
+            margin: 1rem
+
+        .check-in-item
+            box-sizing: border-box
+            padding: 1rem
+            margin: 1rem
+            width: 300px
+            border: 1px solid #ccc
+            border-radius: 5px
