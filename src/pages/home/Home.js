@@ -21,19 +21,6 @@ export default function Home() {
     const honolulu = [-157.858333, 21.306944]; // lng/lat for some reason
 
     useEffect(() => {
-        async function fetchData() {
-            const response = await fetch('http://localhost:3001/green', {
-                mode: 'cors', // no-cors, *cors, same-origin
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            });
-            const data = await response.json();
-            return data;
-        }
-        console.log(fetchData().then((data) => console.log(data)));
-
         if (mapDiv.current) {
             // Initialize map
             const map = new Map({
@@ -63,7 +50,7 @@ export default function Home() {
 
             for (const layer of geoJSONLayers) {
                 layer.popupTemplate = new PopupTemplate({
-                    Trailname: '{Trailname}',
+                    title: '{Trailname}',
                 });
                 map.add(layer);
             }
