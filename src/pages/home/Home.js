@@ -1,7 +1,6 @@
 // import { useMap, useWebMap, useEvent } from 'esri-loader-hooks';
 // import { WebMap } from '@esri/react-arcgis';
 import MapView from '@arcgis/core/views/MapView';
-import WebMap from '@arcgis/core/WebMap';
 import Map from '@arcgis/core/Map';
 import Graphic from '@arcgis/core/Graphic';
 import PopupTemplate from '@arcgis/core/PopupTemplate';
@@ -41,16 +40,20 @@ export default function Home() {
                 basemap: 'arcgis-nova', // Basemap layer service
             });
 
-            // Add geoJSONLayer
-            const geoJSONLayer = new GeoJSONLayer({
-                url: 'http://localhost:3001/green',
-                copyright: "HACC 2021 Hawai'i Trails",
-            });
+            // Add GeoJSON layers
+            const trailColors = ['green', 'yellow', 'red'];
+            const geoJSONLayers = [];
 
-            geoJSONLayer.popupTemplate = new PopupTemplate({
-                Trailname: '{Trailname}',
-            });
+            for (const color of trailColors) {
+                geoJSONLayers.push(
+                    new GeoJSONLayer({
+                        url: `http://localhost:3001/${color}`,
+                        copyright: "HACC 2021 Hawai'i Trails",
+                    })
+                );
+            }
 
+            // Initialize view
             const view = new MapView({
                 container: mapDiv.current,
                 map: map,
@@ -58,7 +61,12 @@ export default function Home() {
                 zoom: 7,
             });
 
-            map.add(geoJSONLayer);
+            for (const layer of geoJSONLayers) {
+                layer.popupTemplate = new PopupTemplate({
+                    Trailname: '{Trailname}',
+                });
+                map.add(layer);
+            }
 
             const polyline = {
                 type: 'polyline', // autocasts as new Polyline()
