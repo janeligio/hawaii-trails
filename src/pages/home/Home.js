@@ -9,6 +9,8 @@ import { useState, useEffect, useRef } from 'react';
 
 import './Home.sass';
 
+const hawaiiTrailsApi = process.env.REACT_APP_SERVER_URL;
+
 export default function Home() {
     const [map, setMap] = useState(null);
     const [view, setView] = useState(null);
@@ -30,7 +32,7 @@ export default function Home() {
             for (const color of trailColors) {
                 geoJSONLayers.push(
                     new GeoJSONLayer({
-                        url: `http://localhost:3001/${color}`,
+                        url: `${hawaiiTrailsApi}/trails/${color}`,
                         copyright: "HACC 2021 Hawai'i Trails",
                         renderer: {
                             type: 'simple', // autocasts as new SimpleRenderer()
