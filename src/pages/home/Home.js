@@ -1,22 +1,16 @@
-// import { useMap, useWebMap, useEvent } from 'esri-loader-hooks';
-// import { WebMap } from '@esri/react-arcgis';
+import { useState, useEffect, useRef } from 'react';
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
 import PopupTemplate from '@arcgis/core/PopupTemplate';
 import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer';
-
-import { useState, useEffect, useRef } from 'react';
+import { HAWAII_TRAILS_API } from '../../constants';
 
 import './Home.sass';
-
-const hawaiiTrailsApi = process.env.REACT_APP_SERVER_URL;
 
 export default function Home() {
     const [map, setMap] = useState(null);
     const [view, setView] = useState(null);
     const mapDiv = useRef(null);
-
-    const honolulu = [-157.858333, 21.306944]; // lng/lat for some reason
 
     useEffect(() => {
         if (mapDiv.current) {
@@ -32,7 +26,7 @@ export default function Home() {
             for (const color of trailColors) {
                 geoJSONLayers.push(
                     new GeoJSONLayer({
-                        url: `${hawaiiTrailsApi}/trails/${color}`,
+                        url: `${HAWAII_TRAILS_API}/trails/${color}`,
                         copyright: "HACC 2021 Hawai'i Trails",
                         renderer: {
                             type: 'simple', // autocasts as new SimpleRenderer()
