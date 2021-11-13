@@ -4,6 +4,7 @@ import Map from '@arcgis/core/Map';
 import PopupTemplate from '@arcgis/core/PopupTemplate';
 import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer';
 import { HAWAII_TRAILS_API } from '../../constants';
+import { TRAILS } from '../../routes/routes';
 
 import './Home.sass';
 
@@ -26,7 +27,7 @@ export default function Home() {
             for (const color of trailColors) {
                 geoJSONLayers.push(
                     new GeoJSONLayer({
-                        url: `${HAWAII_TRAILS_API}/trails/${color}`,
+                        url: `${TRAILS}${color}`,
                         copyright: "HACC 2021 Hawai'i Trails",
                         renderer: {
                             type: 'simple', // autocasts as new SimpleRenderer()
