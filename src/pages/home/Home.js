@@ -5,10 +5,13 @@ import PopupTemplate from '@arcgis/core/PopupTemplate';
 import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer';
 import ClassBreaksRenderer from '@arcgis/core/renderers/ClassBreaksRenderer';
 import { TRAILS } from '../../routes/routes';
+import { useHistory } from 'react-router-dom';
 
 import './Home.sass';
 
 export default function Home() {
+    const history = useHistory();
+
     const [map, setMap] = useState(null);
     const [view, setView] = useState(null);
     const mapDiv = useRef(null);
@@ -26,6 +29,15 @@ export default function Home() {
                 map: map,
                 center: [-157.858333, 21.306944],
                 zoom: 7,
+                popup: {
+                    dockEnabled: true,
+                    dockOptions: {
+                        // Disables the dock button from the popup
+                        buttonEnabled: false,
+                        // Ignore the default sizes that trigger responsive docking
+                        breakpoint: true,
+                    },
+                },
             });
 
             const labelClass = {
@@ -94,27 +106,42 @@ export default function Home() {
                 },
             });
 
+            const viewFeatureAction = {
+                title: 'View',
+                id: 'view-trail',
+            };
+
             const layer = new GeoJSONLayer({
                 url: `${TRAILS}`,
                 renderer: renderer,
                 labelingInfo: [labelClass],
+                popupTemplate: new PopupTemplate({
+                    title: '{name}',
+                    content: '{*}',
+                    actions: [viewFeatureAction],
+                }),
             });
+
             map.add(layer);
 
-            // // Add GeoJSON layers
-            // for (const layer of geoJSONLayers) {
-            //     layer.popupTemplate = new PopupTemplate({
-            //         title: '{Trailname}',
-            //     });
-            //     map.add(layer);
-            // }
+            function handleViewClick() {
+                const featureId = view.popup.selectedFeature.attributes.id;
+                console.log(featureId);
+                // If the view is clicked, go to the trail page
+                history.push('/feature/' + featureId);
+            }
+
+            view.popup.on('trigger-action', (event) => {
+                if (event.action.id === 'view-trail') {
+                    handleViewClick();
+                }
+            });
 
             setMap(map);
             setView(view);
         }
-    }, []);
+    }, [history]);
 
-    // TODO: useGraphics(view); // Add graphics to the view
     return (
         <main id="home">
             <div className="map-view" ref={mapDiv} />

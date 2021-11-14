@@ -2,3 +2,6 @@ import { HAWAII_TRAILS_API } from '../constants';
 
 // Trails
 export const TRAILS = `${HAWAII_TRAILS_API}/api/features`;
+export function getFeaturePath(id) {
+    return `${TRAILS}/${id}`;
+}

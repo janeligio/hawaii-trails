@@ -9,6 +9,7 @@ import Login from './pages/login/Login';
 import SignUp from './pages/signup/SignUp';
 import Profile from './pages/profile/Profile';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import Feature from './pages/feature/Feature';
 
 import './App.css';
 
@@ -26,6 +27,9 @@ function App() {
                         </Route>
                         <Route path="/signup">
                             <SignUp />
+                        </Route>
+                        <Route path="/feature/:featureId">
+                            <Feature />
                         </Route>
                         <ProtectedRoute path="/profile" component={Profile} />
                         <Route exact path="/">
