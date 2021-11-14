@@ -3,7 +3,7 @@ import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
 import PopupTemplate from '@arcgis/core/PopupTemplate';
 import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer';
-import { HAWAII_TRAILS_API } from '../../constants';
+import ClassBreaksRenderer from '@arcgis/core/renderers/ClassBreaksRenderer';
 import { TRAILS } from '../../routes/routes';
 
 import './Home.sass';
@@ -20,32 +20,6 @@ export default function Home() {
                 basemap: 'arcgis-nova', // Basemap layer service
             });
 
-            // Initialize GeoJSON layers
-            const trailColors = ['green', 'yellow', 'red'];
-            const geoJSONLayers = [];
-
-            for (const color of trailColors) {
-                geoJSONLayers.push(
-                    new GeoJSONLayer({
-                        url: `${TRAILS}${color}`,
-                        copyright: "HACC 2021 Hawai'i Trails",
-                        renderer: {
-                            type: 'simple', // autocasts as new SimpleRenderer()
-                            symbol: {
-                                type: 'simple-line', // autocasts as new SimpleMarkerSymbol()
-                                size: 6,
-                                color: color,
-                                outline: {
-                                    // autocasts as new SimpleLineSymbol()
-                                    width: 0.5,
-                                    color: 'white',
-                                },
-                            },
-                        },
-                    })
-                );
-            }
-
             // Initialize view
             const view = new MapView({
                 container: mapDiv.current,
@@ -54,13 +28,86 @@ export default function Home() {
                 zoom: 7,
             });
 
-            // Add GeoJSON layers
-            for (const layer of geoJSONLayers) {
-                layer.popupTemplate = new PopupTemplate({
-                    title: '{Trailname}',
-                });
-                map.add(layer);
-            }
+            const labelClass = {
+                symbol: {
+                    type: 'text',
+                    color: 'white',
+                    font: {
+                        family: 'Ubuntu Mono',
+                        size: 15,
+                        weight: 'bold',
+                    },
+                },
+                labelPlacement: 'above-before',
+                labelExpressionInfo: {
+                    expression: '$feature.name',
+                },
+            };
+
+            const renderer = new ClassBreaksRenderer({
+                type: 'class-breaks',
+                field: 'traffic',
+            });
+
+            renderer.addClassBreakInfo({
+                minValue: 0,
+                maxValue: 32,
+                symbol: {
+                    type: 'simple-line', // autocasts as new SimpleMarkerSymbol()
+                    size: 6,
+                    color: 'green',
+                    outline: {
+                        // autocasts as new SimpleLineSymbol()
+                        width: 0.5,
+                        color: 'white',
+                    },
+                },
+            });
+
+            renderer.addClassBreakInfo({
+                minValue: 33,
+                maxValue: 65,
+                symbol: {
+                    type: 'simple-line', // autocasts as new SimpleMarkerSymbol()
+                    size: 6,
+                    color: 'yellow',
+                    outline: {
+                        // autocasts as new SimpleLineSymbol()
+                        width: 0.5,
+                        color: 'white',
+                    },
+                },
+            });
+
+            renderer.addClassBreakInfo({
+                minValue: 66,
+                maxValue: 100,
+                symbol: {
+                    type: 'simple-line', // autocasts as new SimpleMarkerSymbol()
+                    size: 6,
+                    color: 'red',
+                    outline: {
+                        // autocasts as new SimpleLineSymbol()
+                        width: 0.5,
+                        color: 'white',
+                    },
+                },
+            });
+
+            const layer = new GeoJSONLayer({
+                url: `${TRAILS}`,
+                renderer: renderer,
+                labelingInfo: [labelClass],
+            });
+            map.add(layer);
+
+            // // Add GeoJSON layers
+            // for (const layer of geoJSONLayers) {
+            //     layer.popupTemplate = new PopupTemplate({
+            //         title: '{Trailname}',
+            //     });
+            //     map.add(layer);
+            // }
 
             setMap(map);
             setView(view);
