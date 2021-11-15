@@ -9,9 +9,11 @@ import { useHistory } from 'react-router-dom';
 
 import './Home.sass';
 
-export default function Home() {
-    const history = useHistory();
+const location = navigator.geolocation;
 
+export default function Home() {
+    const history = useHistory([-157.858333, 21.306944]);
+    const [position, setPosition] = useState();
     const [map, setMap] = useState(null);
     const [view, setView] = useState(null);
     const mapDiv = useRef(null);
@@ -27,7 +29,8 @@ export default function Home() {
             const view = new MapView({
                 container: mapDiv.current,
                 map: map,
-                center: [-157.858333, 21.306944],
+                // center: [-157.858333, 21.306944],
+                center: position,
                 zoom: 7,
                 popup: {
                     dockEnabled: true,
@@ -39,6 +42,31 @@ export default function Home() {
                     },
                 },
             });
+
+            if (location) {
+                // If user has location enabled, center map on their location
+
+                location.getCurrentPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        setPosition([longitude, latitude]);
+
+                        view.goTo({
+                            center: [longitude, latitude],
+                            zoom: 13,
+                        });
+
+                        console.log(`Map center: `, view.center);
+                        console.log('My location: ', [longitude, latitude]);
+                    },
+                    (err) => {
+                        console.log(`code:${err.code} ${err.message}`);
+                    }
+                );
+            } else {
+                console.log('location not supported');
+            }
 
             const labelClass = {
                 symbol: {
@@ -61,50 +89,26 @@ export default function Home() {
                 field: 'traffic',
             });
 
-            renderer.addClassBreakInfo({
-                minValue: 0,
-                maxValue: 32,
-                symbol: {
-                    type: 'simple-line', // autocasts as new SimpleMarkerSymbol()
-                    size: 6,
-                    color: 'green',
-                    outline: {
-                        // autocasts as new SimpleLineSymbol()
-                        width: 0.5,
-                        color: 'white',
-                    },
-                },
-            });
+            const renderers = [
+                { min: 0, max: 19, symbol: { color: '#00FF00' } },
+                { min: 20, max: 39, symbol: { color: '#7FFF00' } },
+                { min: 40, max: 59, symbol: { color: '#FFFF00' } },
+                { min: 60, max: 79, symbol: { color: '#FF7F00' } },
+                { min: 80, max: 100, symbol: { color: '#FF0000' } },
+            ];
 
-            renderer.addClassBreakInfo({
-                minValue: 33,
-                maxValue: 65,
-                symbol: {
-                    type: 'simple-line', // autocasts as new SimpleMarkerSymbol()
-                    size: 6,
-                    color: 'yellow',
-                    outline: {
-                        // autocasts as new SimpleLineSymbol()
-                        width: 0.5,
-                        color: 'white',
+            for (let r of renderers) {
+                renderer.addClassBreakInfo({
+                    minValue: r.min,
+                    maxValue: r.max,
+                    symbol: {
+                        type: 'simple-line',
+                        width: 2,
+                        color: r.symbol.color,
+                        join: 'round',
                     },
-                },
-            });
-
-            renderer.addClassBreakInfo({
-                minValue: 66,
-                maxValue: 100,
-                symbol: {
-                    type: 'simple-line', // autocasts as new SimpleMarkerSymbol()
-                    size: 6,
-                    color: 'red',
-                    outline: {
-                        // autocasts as new SimpleLineSymbol()
-                        width: 0.5,
-                        color: 'white',
-                    },
-                },
-            });
+                });
+            }
 
             const viewFeatureAction = {
                 title: 'View',

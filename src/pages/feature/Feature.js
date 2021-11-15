@@ -75,7 +75,7 @@ export default function Feature() {
                         }}
                     />
                 )}
-                {difficulty && (
+                {difficulty && difficulty !== 'N/A' && (
                     <Chip
                         label={difficulty}
                         style={{
