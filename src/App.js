@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Auth0ProviderWithHistory from './auth/Auth0ProviderWithHistory';
 
 import esriConfig from '@arcgis/core/config.js';
+
 // Components/Pages
 import Navigation from './components/Navigation/Navigation';
 import Home from './pages/home/Home';

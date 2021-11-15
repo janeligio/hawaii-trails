@@ -1343,11 +1343,6 @@
     lodash-es "4.17.21"
     sortablejs "1.14.0"
 
-"@esri/react-arcgis@^5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@esri/react-arcgis/-/react-arcgis-5.1.0.tgz#1d49380cb8f99a3968e0e72b83c0516a9273c213"
-  integrity sha512-4zXVx5DoJ5OFN+s1gp9sIWsTP307NlvT7meCsFe/lqPJfs239ztYNnEy6V9tMpPBIx+Lz5fTy47SS61VJM7ToQ==
-
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
