@@ -7,3 +7,65 @@
 
         &:focus
             outline: none
+
+    // Popup styles
+
+    .esri-popup__main-container
+
+    .esri-popup__header-title
+        font-size: 1.5rem
+        font-weight: bold
+        margin-bottom: 0.5rem
+
+    .esri-popup__button
+        margin: 0
+        padding: 0.1rem
+
+    .esri-feature-content
+        ul
+            margin: 0.25rem 0
+            padding: 0
+            list-style: none
+
+            display: flex
+            flex-wrap: wrap
+
+            .chip
+                margin: 0.1rem 0.5rem 0.1rem 0
+                padding: 0.1rem 0.5rem 0.1rem 0.5rem
+                border-radius: 0.5rem
+                border-style: solid
+                border-width: 1px
+                border-color: #ccc
+                display: inline-block
+                font-size: 0.8rem
+                font-weight: normal
+                color: #000000
+
+            .traffic-chip-not-busy
+                background: #00FF00
+
+            .traffic-chip-slightly-busy
+                background: #7FFF00
+            .traffic-chip-fairly-busy
+                background: #FFFF00
+            .traffic-chip-busy
+                background: #FF7F00
+            .traffic-chip-very-busy
+                background: #FF0000
+                color: #FFFFFF
+
+            .difficulty-chip-easy
+                background: #00FF00
+            .difficulty-chip-moderate
+                background: #FFFF00
+            .difficulty-chip-difficult
+                background: #FF0000
+                color: #FFFFFF
+
+    // Hide the id field in the popup.
+    // We need the id field in order to query the trail data.
+    table:nth-of-type(1) tbody tr:first-child
+        background: blue
+        color: red
+        display: none

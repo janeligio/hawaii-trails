@@ -2,10 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
 import PopupTemplate from '@arcgis/core/PopupTemplate';
+import CustomContent from '@arcgis/core/popup/content/CustomContent';
 import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer';
 import ClassBreaksRenderer from '@arcgis/core/renderers/ClassBreaksRenderer';
 import { TRAILS } from '../../routes/routes';
 import { useHistory } from 'react-router-dom';
+import { getTrafficChipData, getDifficultyChipColor } from '../../util/util';
 
 import './Home.sass';
 
@@ -36,7 +38,7 @@ export default function Home() {
                     dockEnabled: true,
                     dockOptions: {
                         // Disables the dock button from the popup
-                        buttonEnabled: false,
+                        buttonEnabled: true,
                         // Ignore the default sizes that trigger responsive docking
                         breakpoint: true,
                     },
@@ -115,13 +117,44 @@ export default function Home() {
                 id: 'view-trail',
             };
 
+            const customContent = new CustomContent({
+                outFields: ['*'],
+                creator: (event) => {
+                    console.dir(event.graphic.attributes);
+                    let { difficulty, traffic } = event.graphic.attributes;
+
+                    const Chip = (className, text) => {
+                        return `<li class="chip ${className}">${text}</li>`;
+                    };
+
+                    const [trafficLabel, , , trafficClassName] =
+                        getTrafficChipData(traffic);
+                    const [, , difficultyClassName] =
+                        getDifficultyChipColor(difficulty);
+
+                    const trafficChip = Chip(trafficClassName, trafficLabel);
+                    const difficultyChip = Chip(
+                        difficultyClassName,
+                        `Difficulty - ${difficulty}`
+                    );
+
+                    return `<ul>
+                    ${trafficChip}
+                    ${difficultyChip}
+                    </ul>`;
+                },
+            });
+
             const layer = new GeoJSONLayer({
                 url: `${TRAILS}`,
                 renderer: renderer,
                 labelingInfo: [labelClass],
+                opacity: 0.75,
                 popupTemplate: new PopupTemplate({
                     title: '{name}',
-                    content: '{*}',
+                    // content: '{*}',
+                    outFields: ['*'],
+                    content: [customContent],
                     actions: [viewFeatureAction],
                 }),
             });
