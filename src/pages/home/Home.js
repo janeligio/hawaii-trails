@@ -12,8 +12,8 @@ import './Home.sass';
 const location = navigator.geolocation;
 
 export default function Home() {
-    const history = useHistory([-157.858333, 21.306944]);
-    const [position, setPosition] = useState();
+    const history = useHistory();
+    const [position, setPosition] = useState([-157.858333, 21.306944]);
     const [map, setMap] = useState(null);
     const [view, setView] = useState(null);
     const mapDiv = useRef(null);
