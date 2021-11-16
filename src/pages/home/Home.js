@@ -5,6 +5,7 @@ import PopupTemplate from '@arcgis/core/PopupTemplate';
 import CustomContent from '@arcgis/core/popup/content/CustomContent';
 import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer';
 import ClassBreaksRenderer from '@arcgis/core/renderers/ClassBreaksRenderer';
+import Legend from '@arcgis/core/widgets/Legend';
 import { TRAILS, PARKS } from '../../routes/routes';
 import { useHistory } from 'react-router-dom';
 import { getTrafficChipData, getDifficultyChipColor } from '../../util/util';
@@ -18,7 +19,9 @@ export default function Home() {
     const [position, setPosition] = useState([-157.858333, 21.306944]);
     const [map, setMap] = useState(null);
     const [view, setView] = useState(null);
+
     const mapDiv = useRef(null);
+    const legendDiv = useRef(null);
 
     useEffect(() => {
         if (mapDiv.current) {
@@ -88,6 +91,9 @@ export default function Home() {
 
             const trailsRenderer = new ClassBreaksRenderer({
                 type: 'class-breaks',
+                legendOptions: {
+                    title: 'Traffic Density',
+                },
                 field: 'traffic',
             });
 
@@ -97,17 +103,43 @@ export default function Home() {
             });
 
             const renderers = [
-                { min: 0, max: 19, symbol: { color: '#00FF00' } },
-                { min: 20, max: 39, symbol: { color: '#7FFF00' } },
-                { min: 40, max: 59, symbol: { color: '#FFFF00' } },
-                { min: 60, max: 79, symbol: { color: '#FF7F00' } },
-                { min: 80, max: 100, symbol: { color: '#FF0000' } },
+                {
+                    min: 0,
+                    max: 19,
+                    symbol: { color: '#00FF00' },
+                    label: 'Not Busy',
+                },
+                {
+                    min: 20,
+                    max: 39,
+                    symbol: { color: '#7FFF00' },
+                    label: 'Slightly Busy',
+                },
+                {
+                    min: 40,
+                    max: 59,
+                    symbol: { color: '#FFFF00' },
+                    label: 'Fairly Busy',
+                },
+                {
+                    min: 60,
+                    max: 79,
+                    symbol: { color: '#FF7F00' },
+                    label: 'Busy',
+                },
+                {
+                    min: 80,
+                    max: 100,
+                    symbol: { color: '#FF0000' },
+                    label: 'Very Busy',
+                },
             ];
 
             for (let r of renderers) {
                 trailsRenderer.addClassBreakInfo({
                     minValue: r.min,
                     maxValue: r.max,
+                    label: r.label,
                     symbol: {
                         type: 'simple-line',
                         width: 2,
@@ -164,6 +196,7 @@ export default function Home() {
                 url: `${TRAILS}`,
                 renderer: trailsRenderer,
                 labelingInfo: [labelClass],
+                legendEnabled: true,
                 opacity: 0.75,
                 popupTemplate: new PopupTemplate({
                     title: '{name}',
@@ -179,7 +212,6 @@ export default function Home() {
                 opacity: 0.75,
                 popupTemplate: new PopupTemplate({
                     title: '{name}',
-                    // content: '{*}',
                     outFields: ['*'],
                     content: [customContent],
                     actions: [viewFeatureAction],
@@ -188,6 +220,20 @@ export default function Home() {
 
             map.add(trailsLayer);
             map.add(parksLayer);
+
+            const trafficLegend = new Legend({
+                view: view,
+                style: 'card',
+                container: legendDiv.current,
+                layerInfos: [
+                    {
+                        layer: trailsLayer,
+                        title: 'Feature Traffic',
+                    },
+                ],
+            });
+
+            view.ui.add(trafficLegend, 'bottom-left');
 
             function handleViewClick() {
                 const featureId = view.popup.selectedFeature.attributes.id;
@@ -211,6 +257,7 @@ export default function Home() {
     return (
         <main id="home">
             <div className="map-view" ref={mapDiv} />
+            <div className="view-legend" ref={legendDiv} />
         </main>
     );
 }
