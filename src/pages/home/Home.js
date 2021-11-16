@@ -5,7 +5,7 @@ import PopupTemplate from '@arcgis/core/PopupTemplate';
 import CustomContent from '@arcgis/core/popup/content/CustomContent';
 import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer';
 import ClassBreaksRenderer from '@arcgis/core/renderers/ClassBreaksRenderer';
-import { TRAILS } from '../../routes/routes';
+import { TRAILS, PARKS } from '../../routes/routes';
 import { useHistory } from 'react-router-dom';
 import { getTrafficChipData, getDifficultyChipColor } from '../../util/util';
 
@@ -86,7 +86,12 @@ export default function Home() {
                 },
             };
 
-            const renderer = new ClassBreaksRenderer({
+            const trailsRenderer = new ClassBreaksRenderer({
+                type: 'class-breaks',
+                field: 'traffic',
+            });
+
+            const parksRenderer = new ClassBreaksRenderer({
                 type: 'class-breaks',
                 field: 'traffic',
             });
@@ -100,7 +105,7 @@ export default function Home() {
             ];
 
             for (let r of renderers) {
-                renderer.addClassBreakInfo({
+                trailsRenderer.addClassBreakInfo({
                     minValue: r.min,
                     maxValue: r.max,
                     symbol: {
@@ -110,11 +115,21 @@ export default function Home() {
                         join: 'round',
                     },
                 });
+                parksRenderer.addClassBreakInfo({
+                    minValue: r.min,
+                    maxValue: r.max,
+                    symbol: {
+                        type: 'simple-fill',
+                        width: 2,
+                        color: r.symbol.color,
+                        join: 'round',
+                    },
+                });
             }
 
             const viewFeatureAction = {
                 title: 'View',
-                id: 'view-trail',
+                id: 'view-feature',
             };
 
             const customContent = new CustomContent({
@@ -145,10 +160,22 @@ export default function Home() {
                 },
             });
 
-            const layer = new GeoJSONLayer({
+            const trailsLayer = new GeoJSONLayer({
                 url: `${TRAILS}`,
-                renderer: renderer,
+                renderer: trailsRenderer,
                 labelingInfo: [labelClass],
+                opacity: 0.75,
+                popupTemplate: new PopupTemplate({
+                    title: '{name}',
+                    outFields: ['*'],
+                    content: [customContent],
+                    actions: [viewFeatureAction],
+                }),
+            });
+
+            const parksLayer = new GeoJSONLayer({
+                url: `${PARKS}`,
+                renderer: parksRenderer,
                 opacity: 0.75,
                 popupTemplate: new PopupTemplate({
                     title: '{name}',
@@ -159,7 +186,8 @@ export default function Home() {
                 }),
             });
 
-            map.add(layer);
+            map.add(trailsLayer);
+            map.add(parksLayer);
 
             function handleViewClick() {
                 const featureId = view.popup.selectedFeature.attributes.id;
@@ -168,8 +196,9 @@ export default function Home() {
                 history.push('/feature/' + featureId);
             }
 
+            // Assign a button to the popup with text 'View' that opens the feature page
             view.popup.on('trigger-action', (event) => {
-                if (event.action.id === 'view-trail') {
+                if (event.action.id === 'view-feature') {
                     handleViewClick();
                 }
             });
