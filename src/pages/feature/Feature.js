@@ -17,7 +17,6 @@ export default function Feature() {
     const { featureId } = useParams();
 
     async function onCheckIn(user, featureId) {
-        const { name, picture, email, nickname } = user;
         try {
             const token = await getAccessTokenSilently();
 
@@ -83,6 +82,10 @@ export default function Feature() {
         getDifficultyChipColor(difficulty);
 
     function Section({ title, body }) {
+        if (!body || body === 'Unknown') {
+            return null;
+        }
+
         return (
             <Paper className="section">
                 <h3>{title}</h3>
@@ -92,8 +95,19 @@ export default function Feature() {
     }
     return (
         <main id="feature">
-            <h1>{name || 'Feature Name Unavailable'}</h1>
-            <div>
+            <h1>
+                {name || 'Feature Name Unavailable'}{' '}
+                <Button
+                    className="check-in-button"
+                    variant="contained"
+                    onClick={async () => {
+                        await onCheckIn(user, featureId);
+                    }}
+                >
+                    Check In
+                </Button>
+            </h1>
+            <div className="feature-chips">
                 {traffic && (
                     <Chip
                         label={trafficLabel}
@@ -119,40 +133,15 @@ export default function Feature() {
                     />
                 )}
             </div>
-            <div className="feature-actions">
-                <Button
-                    variant="contained"
-                    onClick={async () => {
-                        await onCheckIn(user, featureId);
-                    }}
-                >
-                    Check In
-                </Button>
-            </div>
             <div className="feature-info">
                 <Section title="District" body={district || 'Unknown'} />
                 <Section title="Start Point" body={startPoint || 'Unknown'} />
                 <Section title="End Point" body={endPoint || 'Unknown'} />
-                <Section
-                    title="Elevation Gain"
-                    body={elevationGain || 'Unknown'}
-                />
-                <Section
-                    title="Features"
-                    body={features?.join(', ') || 'Unknown'}
-                />
-                <Section
-                    title="Amenities"
-                    body={amenities?.join(', ') || 'Unknown'}
-                />
-                <Section
-                    title="Climate"
-                    body={climate?.join(', ') || 'Unknown'}
-                />
-                <Section
-                    title="Hazards"
-                    body={hazards?.join(', ') || 'Unknown'}
-                />
+                <Section title="Elevation Gain" body={elevationGain} />
+                <Section title="Features" body={features?.join(', ')} />
+                <Section title="Amenities" body={amenities?.join(', ')} />
+                <Section title="Climate" body={climate?.join(', ')} />
+                <Section title="Hazards" body={hazards?.join(', ')} />
             </div>
         </main>
     );
