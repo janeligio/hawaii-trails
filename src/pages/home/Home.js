@@ -180,10 +180,13 @@ export default function Home() {
                         getDifficultyChipColor(difficulty);
 
                     const trafficChip = Chip(trafficClassName, trafficLabel);
-                    const difficultyChip = Chip(
-                        difficultyClassName,
-                        `Difficulty - ${difficulty}`
-                    );
+                    const difficultyChip =
+                        difficulty && difficulty !== 'N/A'
+                            ? Chip(
+                                  difficultyClassName,
+                                  `Difficulty - ${difficulty}`
+                              )
+                            : '';
 
                     return `<ul>
                     ${trafficChip}
