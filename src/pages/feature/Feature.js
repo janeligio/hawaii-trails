@@ -1,16 +1,44 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
 import { getFeaturePath } from '../../routes/routes';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import { getTrafficChipData, getDifficultyChipColor } from '../../util/util';
-import './Feature.sass';
 import { Button } from '@mui/material';
+import { POST_CHECKIN_ROUTE } from '../../routes/routes';
+import './Feature.sass';
 
 export default function Feature() {
     const [feature, setFeature] = useState(null);
 
+    const { getAccessTokenSilently, user } = useAuth0();
+
     const { featureId } = useParams();
+
+    async function onCheckIn(user, featureId) {
+        const { name, picture, email, nickname } = user;
+        try {
+            const token = await getAccessTokenSilently();
+
+            const response = await fetch(POST_CHECKIN_ROUTE, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user: user,
+                    featureId: featureId,
+                }),
+            });
+
+            const responseData = await response.json();
+            console.log(responseData);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     useEffect(() => {
         async function fetchData() {
@@ -92,7 +120,14 @@ export default function Feature() {
                 )}
             </div>
             <div className="feature-actions">
-                <Button variant="contained">Check In</Button>
+                <Button
+                    variant="contained"
+                    onClick={async () => {
+                        await onCheckIn(user, featureId);
+                    }}
+                >
+                    Check In
+                </Button>
             </div>
             <div className="feature-info">
                 <Section title="District" body={district || 'Unknown'} />
