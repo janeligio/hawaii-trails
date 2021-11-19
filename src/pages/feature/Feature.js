@@ -7,6 +7,7 @@ import Paper from '@mui/material/Paper';
 import { getTrafficChipData, getDifficultyChipColor } from '../../util/util';
 import { Button } from '@mui/material';
 import { POST_CHECKIN_ROUTE } from '../../routes/routes';
+import Histogram from '../../components/Histogram/Histogram';
 import './Feature.sass';
 
 export default function Feature() {
@@ -44,6 +45,7 @@ export default function Feature() {
             const api = getFeaturePath(featureId);
             const response = await fetch(api);
             const data = await response.json();
+            console.log(data);
             setFeature(data);
         }
         fetchData();
@@ -142,6 +144,11 @@ export default function Feature() {
                 <Section title="Amenities" body={amenities?.join(', ')} />
                 <Section title="Climate" body={climate?.join(', ')} />
                 <Section title="Hazards" body={hazards?.join(', ')} />
+            </div>
+            <div className="feature-graphs">
+                <Paper elevatin={2}>
+                    <Histogram />
+                </Paper>
             </div>
         </main>
     );
