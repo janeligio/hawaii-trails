@@ -99,15 +99,17 @@ export default function Feature() {
         <main id="feature">
             <h1 className="feature-name">
                 {name || 'Feature Name Unavailable'}{' '}
-                <Button
-                    className="check-in-button"
-                    variant="contained"
-                    onClick={async () => {
-                        await onCheckIn(user, featureId);
-                    }}
-                >
-                    Check In
-                </Button>
+                {user && (
+                    <Button
+                        className="check-in-button"
+                        variant="contained"
+                        onClick={async () => {
+                            await onCheckIn(user, featureId);
+                        }}
+                    >
+                        Check In
+                    </Button>
+                )}
             </h1>
             <div className="feature-chips">
                 {traffic && (
