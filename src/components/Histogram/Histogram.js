@@ -28,19 +28,24 @@ export default function Histogram({ data }) {
     ]);
 
     useEffect(() => {
-        const findDataForCurrentDay = (data) => {
-            const index = data.findIndex((item) => item.fullDay === currentDay);
+        if (data) {
+            const findDataForCurrentDay = (data) => {
+                const index = data.findIndex(
+                    (item) => item.fullDay === currentDay
+                );
 
-            if (index === -1) {
-                console.log('Failed to query data');
-                return [];
-            }
+                if (index === -1) {
+                    console.log('Failed to query data');
+                    return [];
+                }
 
-            return data[index].data;
-        };
-        const data = findDataForCurrentDay(sampleData);
-        setCurrentGraphData(data);
-    }, [currentDay]); // eslint-disable-line react-hooks/exhaustive-deps
+                return data[index].data;
+            };
+            // const data = findDataForCurrentDay(sampleData);
+            const graphData = findDataForCurrentDay(data);
+            setCurrentGraphData(graphData);
+        }
+    }, [currentDay, data]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const dayMap = {
         Sun: 'Sunday',

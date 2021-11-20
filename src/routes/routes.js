@@ -7,5 +7,8 @@ export const PARKS = `${HAWAII_TRAILS_API}/api/features/parks`;
 export function getFeaturePath(id) {
     return `${FEATURES_ROUTE}/feature/${id}`;
 }
+export function getFeatureStatisticsPath(id) {
+    return `${FEATURES_ROUTE}/feature/statistics/${id}`;
+}
 // POST
 export const POST_CHECKIN_ROUTE = `${HAWAII_TRAILS_API}/api/check-in`;

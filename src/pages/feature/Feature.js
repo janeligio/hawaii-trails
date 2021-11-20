@@ -1,17 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
-import { getFeaturePath } from '../../routes/routes';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import { getTrafficChipData, getDifficultyChipColor } from '../../util/util';
 import { Button } from '@mui/material';
-import { POST_CHECKIN_ROUTE } from '../../routes/routes';
+import {
+    getFeaturePath,
+    getFeatureStatisticsPath,
+    POST_CHECKIN_ROUTE,
+} from '../../routes/routes';
 import Histogram from '../../components/Histogram/Histogram';
 import './Feature.sass';
 
 export default function Feature() {
     const [feature, setFeature] = useState(null);
+    const [featureStatistics, setFeatureStatistics] = useState(null);
 
     const { getAccessTokenSilently, user } = useAuth0();
 
@@ -49,6 +53,17 @@ export default function Feature() {
             setFeature(data);
         }
         fetchData();
+    }, [featureId]);
+
+    useEffect(() => {
+        async function fetchFeatureStatistics() {
+            const api = getFeatureStatisticsPath(featureId);
+            const response = await fetch(api);
+            const data = await response.json();
+            console.log(data);
+            setFeatureStatistics(data);
+        }
+        fetchFeatureStatistics();
     }, [featureId]);
 
     let name,
@@ -149,7 +164,7 @@ export default function Feature() {
             </div>
             <div className="feature-graphs">
                 <Paper elevatin={2}>
-                    <Histogram />
+                    <Histogram data={featureStatistics} />
                 </Paper>
             </div>
         </main>
