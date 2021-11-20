@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
+import LoadingButton from '@mui/lab/LoadingButton';
 import { getTrafficChipData, getDifficultyChipColor } from '../../util/util';
-import { Button } from '@mui/material';
 import {
     getFeaturePath,
     getFeatureStatisticsPath,
@@ -16,6 +16,8 @@ import './Feature.sass';
 export default function Feature() {
     const [feature, setFeature] = useState(null);
     const [featureStatistics, setFeatureStatistics] = useState(null);
+    const [isCheckingIn, setIsCheckingIn] = useState(false);
+    const [isCheckInSuccess, setIsCheckInSuccess] = useState(null);
 
     const { getAccessTokenSilently, user } = useAuth0();
 
@@ -23,6 +25,7 @@ export default function Feature() {
 
     async function onCheckIn(user, featureId) {
         try {
+            setIsCheckingIn(true);
             const token = await getAccessTokenSilently();
 
             const response = await fetch(POST_CHECKIN_ROUTE, {
@@ -38,8 +41,15 @@ export default function Feature() {
             });
 
             const responseData = await response.json();
-            console.log(responseData);
+            console.dir(responseData);
+            if (responseData.status === 'success') {
+                setIsCheckingIn(false);
+                setIsCheckInSuccess(true);
+            }
         } catch (error) {
+            setIsCheckingIn(false);
+            setIsCheckInSuccess(false);
+
             console.error(error);
         }
     }
@@ -115,15 +125,13 @@ export default function Feature() {
             <h1 className="feature-name">
                 {name || 'Feature Name Unavailable'}{' '}
                 {user && (
-                    <Button
-                        className="check-in-button"
-                        variant="contained"
-                        onClick={async () => {
+                    <MyLoadingButton
+                        isLoading={isCheckingIn}
+                        handleClick={async () => {
                             await onCheckIn(user, featureId);
                         }}
-                    >
-                        Check In
-                    </Button>
+                        checkInSuccess={isCheckInSuccess}
+                    />
                 )}
             </h1>
             <div className="feature-chips">
@@ -168,5 +176,36 @@ export default function Feature() {
                 </Paper>
             </div>
         </main>
+    );
+}
+
+function MyLoadingButton({ isLoading, handleClick, checkInSuccess }) {
+    let color = 'primary';
+    let text = 'Check In';
+    let isDisabled = false;
+    if (checkInSuccess !== null) {
+        if (checkInSuccess) {
+            color = 'success';
+            text = 'Checked In';
+            isDisabled = true;
+        } else {
+            color = 'error';
+            text = 'Error';
+        }
+    }
+
+    const disabledClass = isDisabled ? 'disabled' : '';
+
+    return (
+        <LoadingButton
+            className={`check-in-button ${disabledClass}`}
+            color={color}
+            onClick={handleClick}
+            loading={isLoading}
+            loadingPosition="start"
+            variant="contained"
+        >
+            {text}
+        </LoadingButton>
     );
 }
