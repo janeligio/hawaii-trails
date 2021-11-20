@@ -97,7 +97,7 @@ export default function Feature() {
     }
     return (
         <main id="feature">
-            <h1>
+            <h1 className="feature-name">
                 {name || 'Feature Name Unavailable'}{' '}
                 <Button
                     className="check-in-button"
